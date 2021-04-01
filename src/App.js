@@ -1,7 +1,12 @@
+import Main from '@components/Main';
 import Routes from './Routes';
 
 function App() {
-  return <Routes />;
+  return (
+    <Main>
+      <Routes />
+    </Main>
+  );
 }
 
 export default App;
