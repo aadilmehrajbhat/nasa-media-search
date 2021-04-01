@@ -1,5 +1,15 @@
+import Api from '@api/';
+
 export async function fetchPictureOfTheDay() {
   try {
+    const { data } = await Api.get('/planetary/apod', {
+      params: {
+        thumbs: true,
+        start_date: '2021-01-01',
+        end_date: '2021-01-01',
+      },
+    });
+
     const [
       {
         date,
@@ -11,11 +21,7 @@ export async function fetchPictureOfTheDay() {
         thumbnail_url,
         copyright,
       },
-    ] = await (
-      await fetch(
-        'https://api.nasa.gov/planetary/apod?api_key=KmWdt3EMrEBFC2cmU8zb1VBk5oWvUZu0qzwPQ5v0&thumbs=true&start_date=2021-01-01&end_date=2021-01-01',
-      )
-    ).json();
+    ] = data;
 
     const thumbnailUrl = mediaType === 'video' ? thumbnail_url : hdUrl || url;
 
