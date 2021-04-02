@@ -1,3 +1,4 @@
+import { SearchBar } from '@components/';
 import { useDailyPicture } from '@hooks/';
 
 function DailyPicture() {
@@ -7,7 +8,10 @@ function DailyPicture() {
 
   return (
     <section className="py-10">
-      <p>{picture.title}</p>
+      <div className="flex justify-between items-baseline">
+        <p>{picture.title}</p>
+        <SearchBar />
+      </div>
       <div className="my-5">
         <div className="aspect-w-16 aspect-h-9">
           <img
@@ -18,8 +22,12 @@ function DailyPicture() {
         </div>
       </div>
       <p>{picture.explanation}</p>
-      <small>{picture.date}</small>
-      {picture.copyright && <p>Copyright {picture.copyright}</p>}
+      <p className="text-center mt-4">{picture.date}</p>
+      {picture.copyright && (
+        <p className="text-center my-4 text-gray-400">
+          &#169; Copyright {picture.copyright}
+        </p>
+      )}
     </section>
   );
 }

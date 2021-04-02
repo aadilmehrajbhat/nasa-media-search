@@ -1,44 +1,65 @@
 import Api from '@api/';
 
 export async function fetchPictureOfTheDay() {
-  try {
-    const { data } = await Api.get('/planetary/apod', {
-      params: {
-        thumbs: true,
-        start_date: '2021-01-01',
-        end_date: '2021-01-01',
-      },
-    });
+  const { data } = await Api.get('/planetary/apod', {
+    params: {
+      thumbs: true,
+      api_key: process.env.REACT_APP_API_KEY,
+    },
+  });
 
-    const [
-      {
-        date,
-        explanation,
-        title,
-        media_type: mediaType,
-        url,
-        hdurl: hdUrl,
-        thumbnail_url,
-        copyright,
-      },
-    ] = data;
+  const {
+    date,
+    explanation,
+    title,
+    media_type: mediaType,
+    url,
+    hdurl: hdUrl,
+    thumbnail_url,
+    copyright,
+  } = data;
 
-    const thumbnailUrl = mediaType === 'video' ? thumbnail_url : hdUrl || url;
+  const thumbnailUrl = mediaType === 'video' ? thumbnail_url : hdUrl || url;
 
-    return {
-      date,
-      explanation,
+  return {
+    date,
+    explanation,
+    title,
+    thumbnailUrl,
+    copyright,
+  };
+}
+
+export async function fetchImagesByQuery({ query, page = 1 }) {
+  const url = 'https://images-api.nasa.gov/search';
+  const { data } = await Api.get(url, {
+    params: { q: query, media_type: 'image', page },
+  });
+  const {
+    collection: {
+      items = [],
+      metadata: { total_hits: totalCount },
+    },
+  } = data;
+
+  const imagesList = items.map(
+    ({
+      links: [{ href }],
+      data: [{ title, date_created: dateCreated, keywords }],
+    }) => ({
+      href,
       title,
-      thumbnailUrl,
-      copyright,
-    };
-  } catch (error) {
-    return Promise.reject(error.message);
-  }
+      dateCreated,
+      keywords,
+    }),
+  );
+
+  return { imagesList, totalCount };
 }
 
 const MediaSearchAPI = {
   fetchPictureOfTheDay,
+  fetchImagesByQuery,
 };
 
 export default MediaSearchAPI;
